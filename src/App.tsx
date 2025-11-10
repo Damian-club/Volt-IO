@@ -90,10 +90,10 @@ export default function App() {
         }}
       />
       
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex ">
         <ComponentsPalette onAddComponent={addComponent} />
         
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <CircuitCanvas3D
             components={components}
             connections={connections}
