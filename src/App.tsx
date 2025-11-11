@@ -3,6 +3,7 @@ import { ComponentsPalette } from './components/ComponentsPalette';
 import { Toolbar } from './components/Toolbar';
 import { PropertiesPanel } from './components/PropertiesPanel';
 import './globals/globals.css';
+import CircuitCanvas from './components/circuit/CircuitCanvas';
 
 export interface CircuitComponent {
   id: string;
@@ -93,17 +94,8 @@ export default function App() {
         <ComponentsPalette onAddComponent={addComponent} />
         
         <div className="flex-1 relative overflow-hidden">
-          {/* <CircuitCanvas3D
-            components={components}
-            connections={connections}
-            selectedComponent={selectedComponent}
-            onSelectComponent={setSelectedComponent}
-            onUpdateComponent={updateComponent}
-            onDeleteComponent={deleteComponent}
-            tool={tool}
-            gridVisible={gridVisible}
-            onAddConnection={addConnection}
-          /> */}
+
+          <CircuitCanvas />
         </div>
         
         {selectedComponentData && (
