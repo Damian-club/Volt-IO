@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CircuitCanvas3D } from './components/CircuitCanvas3D';
 import { ComponentsPalette } from './components/ComponentsPalette';
 import { Toolbar } from './components/Toolbar';
 import { PropertiesPanel } from './components/PropertiesPanel';
@@ -94,7 +93,7 @@ export default function App() {
         <ComponentsPalette onAddComponent={addComponent} />
         
         <div className="flex-1 relative overflow-hidden">
-          <CircuitCanvas3D
+          {/* <CircuitCanvas3D
             components={components}
             connections={connections}
             selectedComponent={selectedComponent}
@@ -104,7 +103,7 @@ export default function App() {
             tool={tool}
             gridVisible={gridVisible}
             onAddConnection={addConnection}
-          />
+          /> */}
         </div>
         
         {selectedComponentData && (

@@ -20,7 +20,7 @@ export function Toolbar({ tool, onToolChange, gridVisible, onGridToggle, onClear
   return (
     <div className="h-14 bg-slate-900 border-b border-slate-800 flex items-center px-4 gap-2">
       <div className="text-slate-100">
-        <span className="mr-2">Circuit Builder 3D</span>
+        <span className="mr-2">Volt I/O</span>
       </div>
       
       <Separator orientation="vertical" className="h-8 bg-slate-700 mx-2" />
