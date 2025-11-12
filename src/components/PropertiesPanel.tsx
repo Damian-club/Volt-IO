@@ -19,7 +19,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
   if (!selectedComponent) {
     return (
       <div className="w-80 bg-slate-900 border-l border-slate-800 flex items-center justify-center">
-        <p className="text-slate-400 text-sm">Select a component to edit properties</p>
+        <p className="text-slate-400 text-sm">Selecciona un componente para editar sus propiedades</p>
       </div>
     );
   }
@@ -27,8 +27,8 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
   const updatePosition = (axis: 0 | 1 | 2, value: number) => {
     const newPosition = [...selectedComponent.position] as [number, number, number];
     newPosition[axis] = value;
-    // Position is handled by moveComponent, not updateComponentProperties
-    // This would need to be handled differently
+    // La posición se maneja con moveComponent, no con updateComponentProperties
+    // Esto necesitaría manejarse de manera diferente
   };
 
   const updateProperty = (key: string, value: any) => {
@@ -40,13 +40,13 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
   return (
     <div className="w-80 bg-slate-900 border-l border-slate-800 flex flex-col">
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-        <h2 className="text-slate-100">Properties</h2>
+        <h2 className="text-slate-100">Propiedades</h2>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         <div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-slate-400">Type</span>
+            <span className="text-sm text-slate-400">Tipo</span>
             <span className="text-sm text-slate-100 capitalize">{selectedComponent.type}</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
         {(selectedComponent.type === 'resistor' || selectedComponent.type === 'capacitor' || selectedComponent.type === 'coil') && (
           <div className="space-y-2">
             <Label htmlFor="value" className="text-slate-300">
-              Value {selectedComponent.type === 'resistor' ? '(Ω)' : selectedComponent.type === 'capacitor' ? '(F)' : '(H)'}
+              Valor {selectedComponent.type === 'resistor' ? '(Ω)' : selectedComponent.type === 'capacitor' ? '(F)' : '(H)'}
             </Label>
             <Input
               id="value"
@@ -69,7 +69,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
 
         {selectedComponent.type === 'voltageSource' && (
           <div className="space-y-2">
-            <Label htmlFor="vdc" className="text-slate-300">DC Voltage (V)</Label>
+            <Label htmlFor="vdc" className="text-slate-300">Voltaje DC (V)</Label>
             <Input
               id="vdc"
               type="number"
@@ -82,7 +82,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
 
         {selectedComponent.type === 'led' && (
           <div className="space-y-2">
-            <Label htmlFor="forwardVoltage" className="text-slate-300">Forward Voltage (V)</Label>
+            <Label htmlFor="forwardVoltage" className="text-slate-300">Voltaje de Consumo (V)</Label>
             <Input
               id="forwardVoltage"
               type="number"
@@ -95,15 +95,15 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
 
         {selectedComponent.type === 'switch' && (
           <div className="space-y-2">
-            <Label htmlFor="closed" className="text-slate-300">State</Label>
+            <Label htmlFor="closed" className="text-slate-300">Estado</Label>
             <select
               id="closed"
               value={selectedComponent.properties.closed ? 'closed' : 'open'}
               onChange={(e) => updateProperty('closed', e.target.value === 'closed')}
               className="w-full h-10 px-3 rounded-md bg-slate-800 border border-slate-700 text-slate-100"
             >
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
+              <option value="open">Abierto</option>
+              <option value="closed">Cerrado</option>
             </select>
           </div>
         )}
@@ -111,7 +111,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
         <Separator className="bg-slate-800" />
 
         <div className="space-y-4">
-          <h3 className="text-sm text-slate-400">Position</h3>
+          <h3 className="text-sm text-slate-400">Posición</h3>
           
           <div className="space-y-3">
             <div className="space-y-2">
@@ -169,7 +169,7 @@ export function PropertiesPanel({ components, onUpdate, onDelete }: PropertiesPa
           onClick={() => onDelete(selectedComponent.id)}
         >
           <Trash2 className="h-4 w-4 mr-2" />
-          Delete Component
+          Eliminar Componente
         </Button>
       </div>
     </div>

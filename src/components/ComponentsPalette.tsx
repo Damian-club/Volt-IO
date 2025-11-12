@@ -12,23 +12,23 @@ const COMPONENT_CATEGORIES = [
     name: 'Componentes Pasivos',
     components: [
       { type: 'resistor' as ComponentType, label: 'Resistor', icon: '⎍', color: '#D4A574' },
-      { type: 'capacitor' as ComponentType, label: 'Capacitor', icon: '║', color: '#6B8E23' },
-      { type: 'coil' as ComponentType, label: 'Inductor', icon: '◉', color: '#16A085' },
+      { type: 'capacitor' as ComponentType, label: 'Condensador', icon: '║', color: '#6B8E23' },
+      { type: 'coil' as ComponentType, label: 'Bobina', icon: '◉', color: '#16A085' },
     ],
   },
   {
     name: 'Fuentes de Energía',
     components: [
-      { type: 'voltageSource' as ComponentType, label: 'Voltage Source', icon: '🔋', color: '#4A90E2' },
+      { type: 'voltageSource' as ComponentType, label: 'Fuente de voltaje', icon: '🔋', color: '#4A90E2' },
     ],
   },
   {
     name: 'Semiconductores',
     components: [
       { type: 'led' as ComponentType, label: 'LED', icon: '◆', color: '#E74C3C' },
-      { type: 'diode' as ComponentType, label: 'Diode', icon: '▶', color: '#9B59B6' },
-      { type: 'transistor_npn' as ComponentType, label: 'NPN Transistor', icon: '▶', color: '#34495E' },
-      { type: 'transistor_mosfet' as ComponentType, label: 'MOSFET', icon: '▶', color: '#34495E' },
+      { type: 'diode' as ComponentType, label: 'Diodo', icon: '▶', color: '#9B59B6' },
+      { type: 'transistor_npn' as ComponentType, label: 'Transistor NPN', icon: '▶', color: '#34495E' },
+      { type: 'transistor_mosfet' as ComponentType, label: 'Transistor MOSFET', icon: '▶', color: '#34495E' },
     ],
   },
   {
