@@ -11,12 +11,12 @@ export default class Capacitor extends Component {
     }
 
     stamp(M: number[][], b: number[], nodeIndexMap: Map<Node, number>, dt: number) {
-        const [n1, n2] = this.nodeArray;
+        const [n1, n2] = this.nodeArray.map(n => n.master);
         const G = this._cap / dt;
         const I = G * this._prevVoltage;
 
-        const i1 = nodeIndexMap.get(n1) ?? -1;
-        const i2 = nodeIndexMap.get(n2) ?? -1;
+        const i1 = nodeIndexMap.get(n1?.master ?? n1) ?? -1;
+        const i2 = nodeIndexMap.get(n2?.master ?? n2) ?? -1;
 
         if (i1 !== -1) M[i1][i1] += G;
         if (i2 !== -1) M[i2][i2] += G;
@@ -30,9 +30,9 @@ export default class Capacitor extends Component {
     }
 
     update(nodeIndexMap: Map<Node, number>, voltages: number[]) {
-        const [n1, n2] = this.nodeArray;
-        const i1 = nodeIndexMap.get(n1) ?? -1;
-        const i2 = nodeIndexMap.get(n2) ?? -1;
+        const [n1, n2] = this.nodeArray.map(n => n.master);
+        const i1 = nodeIndexMap.get(n1?.master ?? n1) ?? -1;
+        const i2 = nodeIndexMap.get(n2?.master ?? n2) ?? -1;
 
         const v1 = i1 !== -1 ? voltages[i1] : 0;
         const v2 = i2 !== -1 ? voltages[i2] : 0;

@@ -1,8 +1,6 @@
 import Component from "../../@core/components/Component";
-import Resistor from "../../@core/components/Resistor";
-import VoltageSource from "../../@core/components/VoltageSource";
-import Node from "../../@core/nodes/Node";
-import Simulator from "../../@core/Simulator";
+import type { CircuitComponent3D } from "@/@types/circuit.types";
+
 import {
   OrbitControls,
   PerspectiveCamera,
@@ -467,15 +465,22 @@ function CircuitScene() {
   );
 }
 
-export default function CircuitCanvas({ simulator }: { simulator: any }) {
+
+export interface CircuitCanvasProps {
+  components: CircuitComponent3D[];
+  selected: Element3D | null;
+  onSelect: (c: Element3D | null) => void;
+  gridVisible: boolean;
+}
+
+export default function CircuitCanvas(props: CircuitCanvasProps) {
+  // Destructure props if needed in future, but avoid unused destructuring.
   return (
-    <CircuitProvider simulator={simulator}>
-      <div className="w-full h-screen bg-gray-900">
-        <Canvas shadows>
-          <CircuitScene />
-        </Canvas>
-      </div>
-    </CircuitProvider>
+    <div className="w-full h-screen bg-gray-900">
+      <Canvas shadows>
+        <CircuitScene />
+      </Canvas>
+    </div>
   );
 }
 

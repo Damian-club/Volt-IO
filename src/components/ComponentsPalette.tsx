@@ -1,38 +1,40 @@
-import { type CircuitComponent } from '../App';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
+import { type ComponentType, COMPONENT_METADATA } from '../@types/component-metadata.types';
 
 interface ComponentsPaletteProps {
-  onAddComponent: (type: CircuitComponent['type']) => void;
+  onAddComponent: (type: ComponentType) => void;
 }
 
 const COMPONENT_CATEGORIES = [
   {
     name: 'Componentes Pasivos',
     components: [
-      { type: 'resistor' as const, label: 'Resistor', icon: '⎍', color: '#D4A574' },
-      { type: 'capacitor' as const, label: 'Capacitor', icon: '║', color: '#6B8E23' },
+      { type: 'resistor' as ComponentType, label: 'Resistor', icon: '⎍', color: '#D4A574' },
+      { type: 'capacitor' as ComponentType, label: 'Capacitor', icon: '║', color: '#6B8E23' },
+      { type: 'coil' as ComponentType, label: 'Inductor', icon: '◉', color: '#16A085' },
     ],
   },
   {
     name: 'Fuentes de Energía',
     components: [
-      { type: 'battery' as const, label: 'Batería', icon: '🔋', color: '#4A90E2' },
+      { type: 'voltageSource' as ComponentType, label: 'Voltage Source', icon: '🔋', color: '#4A90E2' },
     ],
   },
   {
     name: 'Semiconductores',
     components: [
-      { type: 'led' as const, label: 'LED', icon: '◆', color: '#E74C3C' },
-      { type: 'transistor' as const, label: 'Transistor', icon: '▶', color: '#9B59B6' },
-      { type: 'chip' as const, label: 'Chip IC', icon: '▪', color: '#34495E' },
+      { type: 'led' as ComponentType, label: 'LED', icon: '◆', color: '#E74C3C' },
+      { type: 'diode' as ComponentType, label: 'Diode', icon: '▶', color: '#9B59B6' },
+      { type: 'transistor_npn' as ComponentType, label: 'NPN Transistor', icon: '▶', color: '#34495E' },
+      { type: 'transistor_mosfet' as ComponentType, label: 'MOSFET', icon: '▶', color: '#34495E' },
     ],
   },
   {
-    name: 'Conexiones',
+    name: 'Control',
     components: [
-      { type: 'wire' as const, label: 'Cable', icon: '─', color: '#95A5A6' },
+      { type: 'switch' as ComponentType, label: 'Switch', icon: '⚡', color: '#F39C12' },
     ],
   },
 ];

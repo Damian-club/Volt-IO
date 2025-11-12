@@ -21,9 +21,10 @@ export default class MOSFET extends Component {
     }
 
     stamp(M: number[][], b: number[], nodeIndexMap: Map<Node, number>): void {
-        const d = nodeIndexMap.get(this.nodeArray[0]);
-        const g = nodeIndexMap.get(this.nodeArray[1]);
-        const s = nodeIndexMap.get(this.nodeArray[2]);
+        const [n1, n2, n3] = this.nodeArray.map(n => n.master);
+        const d = nodeIndexMap.get(n1?.master ?? n1);
+        const g = nodeIndexMap.get(n2?.master ?? n2);
+        const s = nodeIndexMap.get(n3?.master ?? n3);
         if (d === undefined || g === undefined || s === undefined) return;
 
         const Vgs = this._Vgs;
@@ -59,9 +60,10 @@ export default class MOSFET extends Component {
     }
 
     update(nodeIndexMap: Map<Node, number>, voltages: number[]): void {
-        const d = nodeIndexMap.get(this.nodeArray[0]);
-        const g = nodeIndexMap.get(this.nodeArray[1]);
-        const s = nodeIndexMap.get(this.nodeArray[2]);
+        const [n1, n2, n3] = this.nodeArray.map(n => n.master);
+        const d = nodeIndexMap.get(n1?.master ?? n1);
+        const g = nodeIndexMap.get(n2?.master ?? n2);
+        const s = nodeIndexMap.get(n3?.master ?? n3);
         if (d === undefined || g === undefined || s === undefined) return;
 
         this._Vgs = voltages[g] - voltages[s];

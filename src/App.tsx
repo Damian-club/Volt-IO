@@ -1,108 +1,99 @@
-import { useState } from 'react';
-import { ComponentsPalette } from './components/ComponentsPalette';
-import { Toolbar } from './components/Toolbar';
-import { PropertiesPanel } from './components/PropertiesPanel';
-import './globals/globals.css';
-import CircuitCanvas from './components/circuit/CircuitCanvas';
-
-export interface CircuitComponent {
-  id: string;
-  type: 'resistor' | 'capacitor' | 'led' | 'battery' | 'wire' | 'transistor' | 'chip';
-  position: [number, number, number];
-  rotation: [number, number, number];
-  properties: {
-    value?: string;
-    color?: string;
-    label?: string;
-  };
-}
-
-export interface Connection {
-  id: string;
-  from: string;
-  to: string;
-  points: [number, number, number][];
-}
+import { useEffect, useRef } from "react";
+import { ComponentsPalette } from "./components/ComponentsPalette";
+import { PropertiesPanel } from "./components/PropertiesPanel";
+import { Toolbar } from "./components/Toolbar";
+import { Scene } from "./three/Scene";
+import { useCircuitState } from "./hooks/useCircuitState";
+import { useSimulation } from "./hooks/useSimulation";
+import { useUIStore } from "./store/uiStore";
+import { useSimulationStore } from "./store/simulationStore";
+import { type ComponentType } from "./@types/component-metadata.types";
+import Simulator from "./@core/Simulator";
 
 export default function App() {
-  const [components, setComponents] = useState<CircuitComponent[]>([]);
-  const [connections, setConnections] = useState<Connection[]>([]);
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
-  const [tool, setTool] = useState<'select' | 'wire' | 'delete'>('select');
-  const [gridVisible, setGridVisible] = useState(true);
+  const {
+    components,
+    createAndAddComponent,
+    removeComponent,
+    updateComponentProperties,
+    clear,
+  } = useCircuitState();
 
-  const addComponent = (type: CircuitComponent['type']) => {
-    const newComponent: CircuitComponent = {
-      id: `${type}-${Date.now()}`,
-      type,
-      position: [0, 0, 0],
-      rotation: [0, 0, 0],
-      properties: {
-        label: `${type} ${components.filter(c => c.type === type).length + 1}`,
-        value: type === 'resistor' ? '1kΩ' : type === 'capacitor' ? '100μF' : '',
-        color: type === 'led' ? 'red' : '#8B4513',
-      },
-    };
-    setComponents([...components, newComponent]);
-    setSelectedComponent(newComponent.id);
-  };
+  const { tool, gridVisible, setTool, toggleGrid, selectComponent } = useUIStore();
+  const { isRunning, isPaused, start, pause, resume, stop } = useSimulation();
+  const { initialize } = useSimulationStore();
+  const simulatorRef = useRef<Simulator | null>(null);
 
-  const updateComponent = (id: string, updates: Partial<CircuitComponent>) => {
-    setComponents(components.map(c => c.id === id ? { ...c, ...updates } : c));
-  };
-
-  const deleteComponent = (id: string) => {
-    setComponents(components.filter(c => c.id !== id));
-    setConnections(connections.filter(c => c.from !== id && c.to !== id));
-    if (selectedComponent === id) {
-      setSelectedComponent(null);
+  // Initialize simulator
+  useEffect(() => {
+    if (!simulatorRef.current) {
+      const sim = new Simulator();
+      simulatorRef.current = sim;
+      initialize(sim);
     }
+  }, [initialize]);
+
+  // Sync components with simulator
+  useEffect(() => {
+    if (!simulatorRef.current) return;
+
+    // Rebuild simulator with all components
+    const sim = new Simulator();
+    components.forEach((comp) => {
+      sim.addComponent(comp.component);
+    });
+    sim.assignVoltageSourceIndices();
+    simulatorRef.current = sim;
+    initialize(sim);
+  }, [components, initialize]);
+
+  const handleAddComponent = (type: ComponentType) => {
+    const position: [number, number, number] = [0, 0, 0];
+    createAndAddComponent(type, position);
   };
 
-  const addConnection = (from: string, to: string) => {
-    const fromComponent = components.find(c => c.id === from);
-    const toComponent = components.find(c => c.id === to);
-    
-    if (fromComponent && toComponent) {
-      const newConnection: Connection = {
-        id: `connection-${Date.now()}`,
-        from,
-        to,
-        points: [fromComponent.position, toComponent.position],
-      };
-      setConnections([...connections, newConnection]);
-    }
+  const handleUpdateComponent = (id: string, properties: Record<string, any>) => {
+    updateComponentProperties(id, properties);
   };
 
-  const selectedComponentData = components.find(c => c.id === selectedComponent);
+  const handleDeleteComponent = (id: string) => {
+    removeComponent(id);
+    selectComponent(null);
+  };
+
+  const handleClear = () => {
+    clear();
+    stop();
+  };
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-slate-950">
+    <div className="h-screen w-screen flex flex-col bg-slate-950 text-slate-100">
       <Toolbar
         tool={tool}
         onToolChange={setTool}
         gridVisible={gridVisible}
-        onGridToggle={() => setGridVisible(!gridVisible)}
-        onClear={() => {
-          setComponents([]);
-          setConnections([]);
-          setSelectedComponent(null);
-        }}
+        onGridToggle={toggleGrid}
+        onClear={handleClear}
+        isRunning={isRunning}
+        isPaused={isPaused}
+        onStart={() => start()}
+        onPause={pause}
+        onResume={resume}
+        onStop={stop}
       />
-      
-      <div className="flex-1 flex ">
-        <ComponentsPalette onAddComponent={addComponent} />
-        
-        <div className="flex-1 relative overflow-hidden">
 
-          <CircuitCanvas />
+      <div className="flex flex-1 overflow-hidden">
+        <ComponentsPalette onAddComponent={handleAddComponent} />
+
+        <div className="flex-1 relative">
+          <Scene gridVisible={gridVisible} />
         </div>
-        
-        {selectedComponentData && (
+
+        {components.length > 0 && (
           <PropertiesPanel
-            component={selectedComponentData}
-            onUpdate={(updates) => updateComponent(selectedComponentData.id, updates)}
-            onDelete={() => deleteComponent(selectedComponentData.id)}
+            components={components}
+            onUpdate={handleUpdateComponent}
+            onDelete={handleDeleteComponent}
           />
         )}
       </div>

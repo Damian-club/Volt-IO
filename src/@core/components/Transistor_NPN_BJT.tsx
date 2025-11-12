@@ -27,9 +27,10 @@ export default class BJT extends Component {
     }
 
     stamp(M: number[][], b: number[], nodeIndexMap: Map<Node, number>): void {
-        const c = nodeIndexMap.get(this.nodeArray[0]);
-        const bNode = nodeIndexMap.get(this.nodeArray[1]);
-        const e = nodeIndexMap.get(this.nodeArray[2]);
+        const [n1, n2, n3] = this.nodeArray.map(n => n.master);
+        const c = nodeIndexMap.get(n1?.master ?? n1);
+        const bNode = nodeIndexMap.get(n2?.master ?? n2);
+        const e = nodeIndexMap.get(n3?.master ?? n3);
         if (c === undefined || bNode === undefined || e === undefined) return;
 
         const expVbe = Math.exp(this._Vbe / this._Vt);
@@ -65,9 +66,10 @@ export default class BJT extends Component {
     }
 
     update(nodeIndexMap: Map<Node, number>, voltages: number[]): void {
-        const c = nodeIndexMap.get(this.nodeArray[0]);
-        const bNode = nodeIndexMap.get(this.nodeArray[1]);
-        const e = nodeIndexMap.get(this.nodeArray[2]);
+        const [n1, n2, n3] = this.nodeArray.map(n => n.master);
+        const c = nodeIndexMap.get(n1?.master ?? n1);
+        const bNode = nodeIndexMap.get(n2?.master ?? n2);
+        const e = nodeIndexMap.get(n3?.master ?? n3);
         if (c === undefined || bNode === undefined || e === undefined) return;
 
         this._Vbe = voltages[bNode] - voltages[e];

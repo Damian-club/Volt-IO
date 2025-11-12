@@ -21,8 +21,9 @@ export default class Diode extends Component {
         nodeIndexMap: Map<Node, number>,
         dt?: number
     ): void {
-        const n1 = nodeIndexMap.get(this.nodeArray[0]);
-        const n2 = nodeIndexMap.get(this.nodeArray[1]);
+        const [node1, node2] = this.nodeArray.map(n => n.master);
+        const n1 = nodeIndexMap.get(node1?.master ?? node1);
+        const n2 = nodeIndexMap.get(node2?.master ?? node2);
         if (n1 === undefined || n2 === undefined) return;
 
         const G = (this._Is / (this._n * this._Vt)) * Math.exp(this._Vd / (this._n * this._Vt));
@@ -38,8 +39,9 @@ export default class Diode extends Component {
     }
 
     update(nodeIndexMap: Map<Node, number>, voltages: number[]): void {
-        const n1 = nodeIndexMap.get(this.nodeArray[0]);
-        const n2 = nodeIndexMap.get(this.nodeArray[1]);
+        const [node1, node2] = this.nodeArray.map(n => n.master);
+        const n1 = nodeIndexMap.get(node1?.master ?? node1);
+        const n2 = nodeIndexMap.get(node2?.master ?? node2);
         if (n1 === undefined || n2 === undefined) return;
 
         this._Vd = voltages[n1] - voltages[n2];
