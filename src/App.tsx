@@ -19,7 +19,8 @@ export default function App() {
     clear,
   } = useCircuitState();
 
-  const { tool, gridVisible, setTool, toggleGrid, selectComponent } = useUIStore();
+  const { tool, gridVisible, setTool, toggleGrid, selectComponent } =
+    useUIStore();
   const { isRunning, isPaused, start, pause, resume, stop } = useSimulation();
   const { initialize } = useSimulationStore();
   const simulatorRef = useRef<Simulator | null>(null);
@@ -52,7 +53,10 @@ export default function App() {
     createAndAddComponent(type, position);
   };
 
-  const handleUpdateComponent = (id: string, properties: Record<string, any>) => {
+  const handleUpdateComponent = (
+    id: string,
+    properties: Record<string, any>
+  ) => {
     updateComponentProperties(id, properties);
   };
 
@@ -82,7 +86,7 @@ export default function App() {
         onStop={stop}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      {/* <div className="flex flex-1 overflow-hidden">
         <ComponentsPalette onAddComponent={handleAddComponent} />
 
         <div className="flex-1 relative">
@@ -96,6 +100,21 @@ export default function App() {
             onDelete={handleDeleteComponent}
           />
         )}
+      </div> */}
+      <div className="flex flex-1 overflow-hidden relative">
+        <ComponentsPalette onAddComponent={handleAddComponent} />
+        <div className="flex-1 relative">
+          <Scene gridVisible={gridVisible} />
+          {components.length > 0 && (
+            <div className="absolute top-0 right-0 h-full">
+              <PropertiesPanel
+                components={components}
+                onUpdate={handleUpdateComponent}
+                onDelete={handleDeleteComponent}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
