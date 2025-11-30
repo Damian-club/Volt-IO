@@ -1,18 +1,17 @@
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import * as THREE from "three";
 import { type ConnectionPoint as ConnectionPointType } from "../../@types/circuit.types";
 import { useWireMode } from "../../hooks/useWireMode";
 
 interface ConnectionPoint3DProps {
   connectionPoint: ConnectionPointType;
-  componentPosition: [number, number, number];
+  componentPosition: [number, number, number]; // Ya no lo necesitamos
   isSelected: boolean;
   onClick: () => void;
 }
 
 export function ConnectionPoint3D({
   connectionPoint,
-  componentPosition,
   isSelected,
   onClick,
 }: ConnectionPoint3DProps) {
@@ -20,16 +19,13 @@ export function ConnectionPoint3D({
   const { wireMode, selectedConnectionPointId } = useWireMode();
   const isHovered = false; // Could be managed with state
 
-  // Calculate world position directly
-  const worldPosition = useMemo(() => {
-    const localPos = new THREE.Vector3(
-      connectionPoint.localPosition.x,
-      connectionPoint.localPosition.y,
-      connectionPoint.localPosition.z
-    );
-    const compPos = new THREE.Vector3(...componentPosition);
-    return localPos.add(compPos);
-  }, [connectionPoint.localPosition, componentPosition]);
+  // CRÍTICO: Solo usar localPosition
+  // El parent group ya tiene componentPosition, no debemos sumarla
+  const localPosition = new THREE.Vector3(
+    connectionPoint.localPosition.x,
+    connectionPoint.localPosition.y,
+    connectionPoint.localPosition.z
+  );
 
   const getColor = () => {
     if (isSelected) return "#f59e0b";
@@ -43,7 +39,7 @@ export function ConnectionPoint3D({
   return (
     <mesh
       ref={meshRef}
-      position={worldPosition}
+      position={localPosition}
       onClick={(e) => {
         e.stopPropagation();
         onClick();
@@ -65,4 +61,3 @@ export function ConnectionPoint3D({
     </mesh>
   );
 }
-

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { type CircuitComponent3D } from "../../@types/circuit.types";
 import { getComponentMetadata } from "../../lib/component-registry";
@@ -17,9 +17,14 @@ import { Switch3D } from "./Switch3D";
 
 interface Component3DProps {
   component: CircuitComponent3D;
+  onMove?: (id: string, position: [number, number, number]) => void;
+  onRotate?: (id: string, rotation: [number, number, number]) => void;
 }
 
-const COMPONENT_3D_MAP: Record<string, React.ComponentType<{ component: CircuitComponent3D }>> = {
+const COMPONENT_3D_MAP: Record<
+  string,
+  React.ComponentType<{ component: CircuitComponent3D }>
+> = {
   resistor: Resistor3D,
   capacitor: Capacitor3D,
   led: LED3D,
@@ -28,20 +33,18 @@ const COMPONENT_3D_MAP: Record<string, React.ComponentType<{ component: CircuitC
   switch: Switch3D,
 };
 
-export function Component3D({ component }: Component3DProps) {
+export function Component3D({ component, onMove, onRotate }: Component3DProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { selectedComponentId, selectComponent } = useComponentSelection();
-  const { wireMode, selectedConnectionPointId, handleConnectionPointClick } = useWireMode();
+  const { wireMode, selectedConnectionPointId, handleConnectionPointClick } =
+    useWireMode();
   const isSelected = selectedComponentId === component.id;
 
-  // Update position and rotation
-  useFrame(() => {
-    if (!groupRef.current) return;
-    groupRef.current.position.set(...component.position);
-    groupRef.current.rotation.set(...component.rotation);
-  });
+  // CRÍTICO: NO usar useFrame para actualizar posición/rotación
+  // Dejamos que React lo maneje vía props
 
-  const SpecificComponent = COMPONENT_3D_MAP[component.type] || DefaultComponent3D;
+  const SpecificComponent =
+    COMPONENT_3D_MAP[component.type] || DefaultComponent3D;
 
   const handleComponentClick = (e: any) => {
     if (!wireMode) {
@@ -50,12 +53,44 @@ export function Component3D({ component }: Component3DProps) {
     }
   };
 
+  // Handle rotation - Rotate 90° on Y axis
+  const handleRotate90 = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (onRotate) {
+      const newRotation: [number, number, number] = [
+        component.rotation[0],
+        component.rotation[1] + Math.PI / 2,
+        component.rotation[2]
+      ];
+      onRotate(component.id, newRotation);
+    }
+  };
+
   return (
-    <group ref={groupRef}>
+    <group 
+      ref={groupRef}
+      position={component.position}
+      rotation={component.rotation}
+    >
       <DragControls component={component} enabled={!wireMode}>
         <group onClick={handleComponentClick}>
           <SpecificComponent component={component} />
           <SelectionBox visible={isSelected} />
+          
+          {/* Rotation button when selected */}
+          {isSelected && onRotate && (
+            <Html position={[0, 1, 0]} center distanceFactor={10}>
+              <button
+                onClick={handleRotate90}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm shadow-lg transition-colors whitespace-nowrap"
+                style={{ pointerEvents: 'auto' }}
+              >
+                ↻ Rotar 90°
+              </button>
+            </Html>
+          )}
         </group>
       </DragControls>
 
@@ -73,7 +108,7 @@ export function Component3D({ component }: Component3DProps) {
 }
 
 // Default component renderer
-function DefaultComponent3D({ component }: Component3DProps) {
+function DefaultComponent3D({ component }: { component: CircuitComponent3D }) {
   const metadata = getComponentMetadata(component.type as any);
   const geometry = metadata.geometry;
 
@@ -92,10 +127,16 @@ function DefaultComponent3D({ component }: Component3DProps) {
       geom = <boxGeometry args={geometry.args as [number, number, number]} />;
       break;
     case "cylinder":
-      geom = <cylinderGeometry args={geometry.args as [number, number, number, number]} />;
+      geom = (
+        <cylinderGeometry
+          args={geometry.args as [number, number, number, number]}
+        />
+      );
       break;
     case "sphere":
-      geom = <sphereGeometry args={geometry.args as [number, number, number]} />;
+      geom = (
+        <sphereGeometry args={geometry.args as [number, number, number]} />
+      );
       break;
     default:
       geom = <boxGeometry args={[1, 1, 1]} />;
@@ -108,4 +149,3 @@ function DefaultComponent3D({ component }: Component3DProps) {
     </mesh>
   );
 }
-

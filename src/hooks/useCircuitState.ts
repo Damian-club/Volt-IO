@@ -16,24 +16,18 @@ export function useCircuitState() {
   const disconnectNodes = useCircuitStore((state) => state.disconnectNodes);
   const clear = useCircuitStore((state) => state.clear);
 
-  // Get component IDs and wire IDs as stable string dependencies
-  const componentIds = useCircuitStore((state) => 
-    Array.from(state.components.keys()).sort().join(',')
-  );
-  const wireIds = useCircuitStore((state) => 
-    Array.from(state.wires.keys()).sort().join(',')
-  );
+  // CRÍTICO: Suscribirse directamente al Map para que React detecte cambios
+  const componentsMap = useCircuitStore((state) => state.components);
+  const wiresMap = useCircuitStore((state) => state.wires);
 
-  // Memoize arrays based only on ID strings, fetching fresh data inside
+  // Convertir a arrays (se actualizará cuando el Map cambie)
   const components = useMemo(() => {
-    const state = useCircuitStore.getState();
-    return Array.from(state.components.values());
-  }, [componentIds]);
+    return Array.from(componentsMap.values());
+  }, [componentsMap]);
 
   const wires = useMemo(() => {
-    const state = useCircuitStore.getState();
-    return Array.from(state.wires.values());
-  }, [wireIds]);
+    return Array.from(wiresMap.values());
+  }, [wiresMap]);
 
   const createAndAddComponent = useCallback(
     (
@@ -84,9 +78,13 @@ export function useCircuitState() {
 
   const moveComponent = useCallback(
     (id: string, position: [number, number, number]) => {
+      console.log("moveComponent called:", id, position);
       const comp = getComponent(id);
       if (comp) {
+        console.log("Component found, updating position");
         updateComponent(id, { position });
+      } else {
+        console.warn("Component not found:", id);
       }
     },
     [updateComponent, getComponent]
@@ -94,6 +92,7 @@ export function useCircuitState() {
 
   const rotateComponent = useCallback(
     (id: string, rotation: [number, number, number]) => {
+      console.log("rotateComponent called:", id, rotation);
       updateComponent(id, { rotation });
     },
     [updateComponent]
@@ -142,4 +141,3 @@ export function useCircuitState() {
     clear,
   };
 }
-
