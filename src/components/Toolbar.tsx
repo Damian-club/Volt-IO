@@ -1,16 +1,28 @@
-import { MousePointer2, Cable, Trash2, Grid3x3, RotateCcw, Save, Upload, Play, Pause, Square } from 'lucide-react';
-import { Button } from './ui/button';
-import { Separator } from './ui/separator';
-import { 
+import {
+  MousePointer2,
+  Cable,
+  Trash2,
+  Grid3x3,
+  RotateCcw,
+  Save,
+  Upload,
+  Play,
+  Pause,
+  Square,
+  Gauge,
+} from "lucide-react";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './ui/tooltip';
+} from "./ui/tooltip";
 
 interface ToolbarProps {
-  tool: 'select' | 'wire' | 'delete';
-  onToolChange: (tool: 'select' | 'wire' | 'delete') => void;
+  tool: "select" | "wire" | "delete" | "multimeter";
+  onToolChange: (tool: "select" | "wire" | "delete" | "multimeter") => void;
   gridVisible: boolean;
   onGridToggle: () => void;
   onClear: () => void;
@@ -22,11 +34,11 @@ interface ToolbarProps {
   onStop?: () => void;
 }
 
-export function Toolbar({ 
-  tool, 
-  onToolChange, 
-  gridVisible, 
-  onGridToggle, 
+export function Toolbar({
+  tool,
+  onToolChange,
+  gridVisible,
+  onGridToggle,
   onClear,
   isRunning = false,
   isPaused = false,
@@ -40,18 +52,22 @@ export function Toolbar({
       <div className="text-slate-100">
         <span className="mr-2">Volt I/O</span>
       </div>
-      
+
       <Separator orientation="vertical" className="h-8 bg-slate-700 mx-2" />
-      
+
       <TooltipProvider>
         <div className="flex gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant={tool === 'select' ? 'default' : 'ghost'}
+                variant={tool === "select" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => onToolChange('select')}
-                className={tool === 'select' ? 'bg-blue-600 hover:bg-blue-700' : 'text-slate-300 hover:text-slate-100 hover:bg-slate-800'}
+                onClick={() => onToolChange("select")}
+                className={
+                  tool === "select"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "text-slate-300 hover:text-slate-100 hover:bg-slate-800"
+                }
               >
                 <MousePointer2 className="h-4 w-4" />
               </Button>
@@ -62,10 +78,14 @@ export function Toolbar({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant={tool === 'wire' ? 'default' : 'ghost'}
+                variant={tool === "wire" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => onToolChange('wire')}
-                className={tool === 'wire' ? 'bg-blue-600 hover:bg-blue-700' : 'text-slate-300 hover:text-slate-100 hover:bg-slate-800'}
+                onClick={() => onToolChange("wire")}
+                className={
+                  tool === "wire"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "text-slate-300 hover:text-slate-100 hover:bg-slate-800"
+                }
               >
                 <Cable className="h-4 w-4" />
               </Button>
@@ -76,10 +96,32 @@ export function Toolbar({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant={tool === 'delete' ? 'default' : 'ghost'}
+                variant={tool === "multimeter" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => onToolChange('delete')}
-                className={tool === 'delete' ? 'bg-red-600 hover:bg-red-700' : 'text-slate-300 hover:text-slate-100 hover:bg-slate-800'}
+                onClick={() => onToolChange("multimeter")}
+                className={
+                  tool === "multimeter"
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "text-slate-300 hover:text-slate-100 hover:bg-slate-800"
+                }
+              >
+                <Gauge className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Multímetro (M)</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={tool === "delete" ? "default" : "ghost"}
+                size="icon"
+                onClick={() => onToolChange("delete")}
+                className={
+                  tool === "delete"
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "text-slate-300 hover:text-slate-100 hover:bg-slate-800"
+                }
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -98,7 +140,9 @@ export function Toolbar({
               variant="ghost"
               size="icon"
               onClick={onGridToggle}
-              className={`${gridVisible ? 'text-blue-400' : 'text-slate-300'} hover:text-slate-100 hover:bg-slate-800`}
+              className={`${
+                gridVisible ? "text-blue-400" : "text-slate-300"
+              } hover:text-slate-100 hover:bg-slate-800`}
             >
               <Grid3x3 className="h-4 w-4" />
             </Button>

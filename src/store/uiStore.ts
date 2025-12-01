@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type Tool = "select" | "wire" | "delete";
+export type Tool = "select" | "wire" | "delete" | "multimeter";
 export type ComponentType = string;
 
 interface UIStore {
@@ -9,7 +9,10 @@ interface UIStore {
   selectedConnectionPointId: string | null;
   gridVisible: boolean;
   wireMode: boolean;
-  
+
+  multimeterPointA: string | null;
+  multimeterPointB: string | null;
+
   // Actions
   setTool: (tool: Tool) => void;
   selectComponent: (id: string | null) => void;
@@ -17,6 +20,10 @@ interface UIStore {
   toggleGrid: () => void;
   setWireMode: (enabled: boolean) => void;
   clearSelection: () => void;
+
+  setMultimeterPointA: (pointId: string | null) => void;
+  setMultimeterPointB: (pointId: string | null) => void;
+  clearMultimeter: () => void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
@@ -25,6 +32,9 @@ export const useUIStore = create<UIStore>((set) => ({
   selectedConnectionPointId: null,
   gridVisible: true,
   wireMode: false,
+
+  multimeterPointA: null,
+  multimeterPointB: null,
 
   setTool: (tool) => {
     set({ tool, wireMode: tool === "wire" });
@@ -55,5 +65,9 @@ export const useUIStore = create<UIStore>((set) => ({
   clearSelection: () => {
     set({ selectedComponentId: null, selectedConnectionPointId: null });
   },
-}));
 
+  setMultimeterPointA: (pointId) => set({ multimeterPointA: pointId }),
+  setMultimeterPointB: (pointId) => set({ multimeterPointB: pointId }),
+  clearMultimeter: () =>
+    set({ multimeterPointA: null, multimeterPointB: null }),
+}));

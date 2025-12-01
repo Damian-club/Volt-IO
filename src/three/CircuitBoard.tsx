@@ -4,6 +4,7 @@ import { Component3D } from "./components/Component3D";
 import { WirePreview } from "./connection/WirePreview";
 import { ConnectionManager } from "./connection/ConnectionManager";
 import { WireMesh } from "./connection/WireMesh";
+import { Multimeter } from "./components/Multimeter";
 
 export function CircuitBoard() {
   const { components, wires, moveComponent, rotateComponent, removeComponent } =
@@ -41,10 +42,9 @@ export function CircuitBoard() {
       {Array.from(wires).map((wire) => (
         <WireMesh key={wire.id} wire={wire} />
       ))}
-
       {/* Wire preview when in wire mode */}
       <WirePreview />
-
+      <Multimeter />
       {/* Render all components */}
       {components.map((component) => (
         <Component3D
