@@ -15,37 +15,75 @@ export function useWireMode() {
 
   const handleConnectionPointClick = useCallback(
     (connectionPoint: ConnectionPoint) => {
+      console.log("🟡 WireMode - Click en punto:", connectionPoint.id);
+      console.log("🟡 WireMode actual:", wireMode);
+      console.log("🟡 Punto seleccionado actual:", selectedConnectionPointId);
+
       if (!wireMode) {
+        console.log("🟢 Activando modo wire");
         setWireMode(true);
         selectConnectionPoint(connectionPoint.id);
         return;
       }
 
       if (!selectedConnectionPointId) {
+        console.log("🟡 Seleccionando primer punto");
         selectConnectionPoint(connectionPoint.id);
         return;
       }
 
-      // Connect the two points
-      const fromComp = getComponent(connectionPoint.componentId);
-      if (!fromComp) return;
+      console.log("🔗 Conectando puntos...");
 
-      const fromPoint = fromComp.connectionPoints.find(
-        (cp) => cp.id === selectedConnectionPointId
+
+      let fromComp = null;
+      let fromPoint = null;
+
+      const allComponents = Array.from(
+        useCircuitStore.getState().components.values()
       );
-      if (!fromPoint) return;
+      for (const comp of allComponents) {
+        fromPoint = comp.connectionPoints.find(
+          (cp) => cp.id === selectedConnectionPointId
+        );
+        if (fromPoint) {
+          fromComp = comp;
+          break;
+        }
+      }
 
-      // Don't connect to the same point or same component
-      if (
-        fromPoint.id === connectionPoint.id ||
-        fromPoint.componentId === connectionPoint.componentId
-      ) {
+      if (!fromComp || !fromPoint) {
+        console.log(
+          "❌ No se encontró fromPoint con id:",
+          selectedConnectionPointId
+        );
         selectConnectionPoint(null);
         return;
       }
 
-      connectNodes(fromPoint, connectionPoint);
+      const toPoint = connectionPoint;
+      const toComp = getComponent(connectionPoint.componentId);
+
+      if (!toComp) {
+        console.log("❌ No se encontró toComponent");
+        return;
+      }
+
+      if (
+        fromPoint.id === toPoint.id ||
+        fromPoint.componentId === toPoint.componentId
+      ) {
+        console.log("⚠️ Mismo punto o componente, cancelando");
+        selectConnectionPoint(null);
+        return;
+      }
+
+      console.log("✅ Conectando:", fromPoint.id, "->", toPoint.id);
+      console.log("✅ From component:", fromComp.id);
+      console.log("✅ To component:", toComp.id);
+
+      connectNodes(fromPoint, toPoint);
       selectConnectionPoint(null);
+      setWireMode(false);
     },
     [
       wireMode,
@@ -64,4 +102,3 @@ export function useWireMode() {
     handleConnectionPointClick,
   };
 }
-

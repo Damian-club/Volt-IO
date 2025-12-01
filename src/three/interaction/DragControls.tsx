@@ -11,19 +11,19 @@ interface DragControlsProps {
   children: React.ReactNode;
 }
 
-export function DragControls({ 
-  component, 
-  enabled = true, 
-  children 
+export function DragControls({
+  component,
+  enabled = true,
+  children,
 }: DragControlsProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<THREE.Vector3 | null>(null);
-  
+
   const { camera, gl } = useThree();
   const { moveComponent } = useCircuitState();
   const { tool } = useUIStore();
-  
+
   const plane = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
   const raycaster = useRef(new THREE.Raycaster());
 
@@ -40,19 +40,22 @@ export function DragControls({
       const rect = gl.domElement.getBoundingClientRect();
       const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
+
       const pointer = new THREE.Vector2(x, y);
 
       // Raycast to plane
       raycaster.current.setFromCamera(pointer, camera);
       const intersection = new THREE.Vector3();
-      const hit = raycaster.current.ray.intersectPlane(plane.current, intersection);
+      const hit = raycaster.current.ray.intersectPlane(
+        plane.current,
+        intersection
+      );
 
       if (hit) {
         // Calculate new position with snap to grid
         const snappedX = Math.round(intersection.x * 2) / 2; // Snap to 0.5
         const snappedZ = Math.round(intersection.z * 2) / 2; // Snap to 0.5
-        
+
         const newPosition: [number, number, number] = [
           snappedX,
           component.position[1], // Keep Y the same
@@ -68,11 +71,11 @@ export function DragControls({
       console.log("Drag ended for:", component.id);
       setIsDragging(false);
       setDragStart(null);
-      gl.domElement.style.cursor = 'grab';
+      gl.domElement.style.cursor = "grab";
     };
 
     // Set cursor
-    gl.domElement.style.cursor = 'grabbing';
+    gl.domElement.style.cursor = "grabbing";
 
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
@@ -80,34 +83,35 @@ export function DragControls({
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
-      gl.domElement.style.cursor = 'default';
+      gl.domElement.style.cursor = "default";
     };
   }, [
-    isDragging, 
-    enabled, 
-    tool, 
+    isDragging,
+    enabled,
+    tool,
     dragStart,
-    gl, 
-    camera, 
-    component.id, 
+    gl,
+    camera,
+    component.id,
     component.position,
-    moveComponent
+    moveComponent,
   ]);
 
   const handlePointerDown = (e: any) => {
     console.log("Pointer down on:", component.id);
     console.log("Enabled:", enabled);
     console.log("Tool:", tool);
-    
+
     if (!enabled || tool !== "select") {
       console.log("Drag cancelled - conditions not met");
       return;
     }
-    
+
     e.stopPropagation();
 
     // Calculate intersection point
     raycaster.current.setFromCamera(e.pointer, camera);
+
     const intersection = new THREE.Vector3();
     raycaster.current.ray.intersectPlane(plane.current, intersection);
 
@@ -118,19 +122,19 @@ export function DragControls({
 
   const handlePointerOver = () => {
     if (enabled && tool === "select" && !isDragging) {
-      gl.domElement.style.cursor = 'grab';
+      gl.domElement.style.cursor = "grab";
     }
   };
 
   const handlePointerOut = () => {
     if (!isDragging) {
-      gl.domElement.style.cursor = 'default';
+      gl.domElement.style.cursor = "default";
     }
   };
 
   return (
-    <group 
-      ref={groupRef} 
+    <group
+      ref={groupRef}
       onPointerDown={handlePointerDown}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}

@@ -13,10 +13,12 @@ interface WireData {
 
 export function WireMesh({ wire }: { wire: WireConnection }) {
   const wireDataRef = useRef<WireData | null>(null);
-  
+
   // Subscribe to store changes but don't cause re-renders
   useEffect(() => {
-    const updateWireData = (state: ReturnType<typeof useCircuitStore.getState>) => {
+    const updateWireData = (
+      state: ReturnType<typeof useCircuitStore.getState>
+    ) => {
       const comps = Array.from(state.components.values());
       const fromComp = comps.find((c) =>
         c.connectionPoints.some((cp) => cp.id === wire.from)
@@ -94,6 +96,18 @@ export function WireMesh({ wire }: { wire: WireConnection }) {
   });
 
   return (
-    <primitive object={new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: "#3b82f6", linewidth: 2 }))} />
+    <primitive
+      object={
+        new THREE.Line(
+          geometry,
+          new THREE.LineBasicMaterial({
+            color: "#FFFF00",
+            linewidth: 10,
+            transparent: true,
+            opacity: 0.9,
+          })
+        )
+      }
+    />
   );
 }
